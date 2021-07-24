@@ -12,6 +12,10 @@
 
 // TODO: structs, classes, e outras definições.
 
+
+void log_error(const std::string message);
+
+
 std::string left_trim(const std::string &str);
 
 std::string right_trim(const std::string &str);
@@ -69,8 +73,11 @@ public:
    Assembler();
    ~Assembler() { };
 
+   std::vector<VMInstructions> get_vm_instructions() const { return this->vm_instructions; }
+
    std::vector<std::string> convert_code(std::vector<Operation> ops);
-   static int convert_register_to_machine_code(std::string register);
+   VMInstructions find_instruction_by_symbol(std::string symbol);
+   static int convert_register_to_machine_code(std::string registerName);
 };
 
 #endif  // MONTADOR_H

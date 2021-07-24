@@ -4,21 +4,6 @@
 
 #include "montador.h"
 
-#define DEBUG 1
-
-void log_error(const std::string message)
-{
-#if DEBUG 1
-  std::cout << "[ERROR]: "
-  <<  message
-  << " - in file "
-  << __FILE__
-  << " at line "
-  << __LINE__
-  << std::endl;
-#endif
-}
-
 int main(int argc, char *argv[]) {
   /*
   * Ler arquivo texto e separar cada instrução por linhas => 
@@ -60,7 +45,7 @@ int main(int argc, char *argv[]) {
     operations_in_file.push_back(op);
   }
 
-  
+
 
   return 0;
 }

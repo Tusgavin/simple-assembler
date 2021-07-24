@@ -42,7 +42,18 @@ int main()
       index_of_operation++;
    }
 
-   
+   Assembler *assembler = new Assembler();
+
+   std::vector<std::string> converted = assembler->convert_code(mock_operations);
+
+   std::cout << "******** CONVERTENDO PARA VM INSTR. ********" << std::endl;
+
+   for (auto string_vm_inst : converted)
+   {
+      std::cout << string_vm_inst;
+   }
+
+   std::cout << std::endl;
 
    return 0;
 }

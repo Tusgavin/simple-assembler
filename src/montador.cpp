@@ -1,5 +1,18 @@
 #include "montador.h"
 
+
+void log_error(const std::string message)
+{
+  std::cout << "[ERROR]: "
+  <<  message
+  << " - in file "
+  << __FILE__
+  << " at line "
+  << __LINE__
+  << std::endl;
+}
+
+
 std::string left_trim(const std::string &str)
 {
    return std::regex_replace(str, std::regex("^\\s+"), std::string(""));
@@ -146,8 +159,71 @@ Assembler::Assembler()
 
 std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
+   std::vector<std::string> stringfied_vm_instructions;
+
    for (auto op : ops)
    {
-      
+      if (op.get_operador() == "END" || op.get_operador() == "WORD") continue;
+
+      VMInstructions inst = this->find_instruction_by_symbol(op.get_operador());
+      if (inst.symbol != "NOT FOUND")
+      {
+         std::string vm_instructions_string = "";
+         vm_instructions_string = std::to_string(inst.code);
+
+         if (inst.first_arg != NOARG)
+         {
+            if (inst.first_arg == REG)
+            {
+               int operando1_code = Assembler::convert_register_to_machine_code(op.get_operando1());
+               vm_instructions_string = vm_instructions_string + " " + std::to_string(operando1_code);
+            }
+            else if (inst.first_arg == MEM)
+            {
+               vm_instructions_string = vm_instructions_string + " -1";
+            }     
+         }
+
+         if (inst.second_arg != NOARG)
+         {
+            if (inst.second_arg == REG)
+            {
+               int operando2_code = Assembler::convert_register_to_machine_code(op.get_operando2());
+               vm_instructions_string = vm_instructions_string + " " + std::to_string(operando2_code);
+            }
+            else if (inst.second_arg == MEM)
+            {
+               vm_instructions_string = vm_instructions_string + " -1";
+            }     
+         }
+         vm_instructions_string = vm_instructions_string + " ";
+         stringfied_vm_instructions.push_back(vm_instructions_string);
+      }
+      else
+      {
+         log_error("instruction not found");
+         exit(1);
+      }
    }
+
+   return stringfied_vm_instructions;
+}
+
+int Assembler::convert_register_to_machine_code(std::string registerName)
+{
+   if (registerName == "R0") return 0;
+   else if (registerName == "R1") return 1;
+   else if (registerName == "R2") return 2;
+   else if (registerName == "R3") return 3;
+   else return -1;
+}
+
+VMInstructions Assembler::find_instruction_by_symbol(std::string symbol)
+{
+   for (auto instruction : this->get_vm_instructions())
+   {
+      if (instruction.symbol == symbol) return instruction;
+   }
+
+   return VMInstructions("NOT FOUND", -1, -1, -1);
 }
