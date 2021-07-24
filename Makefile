@@ -56,3 +56,13 @@ endif
 
 clean:
 	rm -f bin/* $(OBJS_MONTADOR)
+
+###############################################################################
+################################### Tests #####################################
+###############################################################################
+
+test:
+	g++ -Wall -g -I include/ -c src/montador.cpp -o tests/montador.o
+	g++ -Wall -g -I include/ -c tests/main.cpp -o tests/main.o
+	g++ -Wall -g -o tests/test tests/*.o
+	./tests/test
