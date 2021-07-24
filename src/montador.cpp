@@ -97,3 +97,57 @@ Operation::Operation(std::string operation_stringfied)
       this->set_operando2("");
    }
 }
+
+Assembler::Assembler()
+{
+   VMInstructions ins = VMInstructions("HALT", 0, NOARG, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("LOAD", 1, REG, MEM);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("STORE", 2, REG, MEM);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("READ", 3, REG, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("WRITE", 4, REG, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("COPY", 5, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("PUSH", 6, REG, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("POP", 7, REG, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("ADD", 8, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("SUB", 9, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("MULL", 10, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("DIV", 11, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("MOD", 12, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("AND", 13, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("OR", 14, REG, REG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("NOT", 15, REG, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("JUMP", 16, MEM, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("JZ", 17, MEM, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("JN", 18, MEM, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("CALL", 19, MEM, NOARG);
+   this->vm_instructions.push_back(ins);
+   ins = VMInstructions("RET", 20, NOARG, NOARG);
+   this->vm_instructions.push_back(ins);
+}
+
+std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
+{
+   for (auto op : ops)
+   {
+      
+   }
+}

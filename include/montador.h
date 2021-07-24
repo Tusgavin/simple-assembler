@@ -6,6 +6,10 @@
 #include <regex>
 #include <iostream>
 
+#define NOARG -1
+#define REG 0
+#define MEM 1
+
 // TODO: structs, classes, e outras definições.
 
 std::string left_trim(const std::string &str);
@@ -40,18 +44,33 @@ public:
    void set_operando2(std::string operando2) { this->operando2 = operando2; }
 };
 
-// class Assembler
-// {
-// private:
-//    std::vector<Operation> vm_instructions;
+typedef struct VMInstructions
+{
+   std::string symbol;
+   int code;
+   int first_arg;
+   int second_arg;
 
-// public:
-//    Assembler();
-//    ~Assembler();
+   VMInstructions(std::string symbol, int code, int first_arg, int second_arg)
+   {
+      this->symbol = symbol;
+      this->code = code;
+      this->first_arg = first_arg;
+      this->second_arg = second_arg;
+   }
+} VMInstructions;
 
-//    Operation findBySymbol(std::string symbol);
-//    std::vector<Operation> get_instructions_per_string(std::vector<std::string> instrucions_string);
-//    std::string convert_code(std::vector<Operation> ops);
-// };
+class Assembler
+{
+private:
+   std::vector<VMInstructions> vm_instructions;
+
+public:
+   Assembler();
+   ~Assembler() { };
+
+   std::vector<std::string> convert_code(std::vector<Operation> ops);
+   static int convert_register_to_machine_code(std::string register);
+};
 
 #endif  // MONTADOR_H

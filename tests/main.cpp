@@ -4,9 +4,11 @@
 
 int main()
 {
+   std::cout << std::endl;
    std::cout << "###############################################" << std::endl;
    std::cout << "#############  ! RUNNING TESTS !  #############" << std::endl;
    std::cout << "###############################################" << std::endl;
+   std::cout << std::endl;
 
    std::vector<std::string> mock_instructions;
 
@@ -28,9 +30,10 @@ int main()
 
    int index_of_operation = 0;
 
+   std::cout << "******** IMPRIMINDO OPERAÇÕES ********" << std::endl;
+
    for (auto op : mock_operations)
    {
-      std::cout << std::endl;
       std::cout << ">> OPERATION " << index_of_operation << std::endl;
       std::cout << "label: " << op.get_label() << std::endl;
       std::cout << "operador: " << op.get_operador() << std::endl;
@@ -38,6 +41,8 @@ int main()
       std::cout << "operando2: " << op.get_operando2() << std::endl;
       index_of_operation++;
    }
+
+   
 
    return 0;
 }
