@@ -52,5 +52,15 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  std::vector<Operation *> operations_in_file;
+
+  for (auto instruction_stringfied : instructions_in_file)
+  {
+    Operation * op = new Operation(instruction_stringfied);
+    operations_in_file.push_back(op);
+  }
+
+  
+
   return 0;
 }

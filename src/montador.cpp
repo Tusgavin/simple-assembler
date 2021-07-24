@@ -5,7 +5,7 @@ Operation::Operation(std::string operation_stringfied)
 {
    operation_stringfied = trim(operation_stringfied);
 
-   // Comments
+   // Comments - delete every character after comment delimiter is found
    std::string comment_delimeter = ";";
    std::size_t comment_start_index = operation_stringfied.find(comment_delimeter);
    if (comment_start_index != std::string::npos) 
