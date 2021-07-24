@@ -46,6 +46,7 @@ int main()
 
    std::vector<std::string> converted = assembler->convert_code(mock_operations);
 
+   std::cout << std::endl;
    std::cout << "******** CONVERTENDO PARA VM INSTR. ********" << std::endl;
 
    for (auto string_vm_inst : converted)

@@ -15,7 +15,6 @@
 
 void log_error(const std::string message);
 
-
 std::string left_trim(const std::string &str);
 
 std::string right_trim(const std::string &str);

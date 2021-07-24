@@ -161,18 +161,31 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
    std::vector<std::string> stringfied_vm_instructions;
 
+   int index = 0;
+
    for (auto op : ops)
    {
-      if (op.get_operador() == "END" || op.get_operador() == "WORD") continue;
+      std::string vm_instructions_string = "";
+
+      if (op.get_operador() == "END") continue;
+
+      if (op.get_operador() == "WORD")
+      {
+         vm_instructions_string = vm_instructions_string + op.get_operando1();
+         stringfied_vm_instructions.push_back(vm_instructions_string);
+         continue;
+      }
 
       VMInstructions inst = this->find_instruction_by_symbol(op.get_operador());
       if (inst.symbol != "NOT FOUND")
       {
-         std::string vm_instructions_string = "";
+         index++;
          vm_instructions_string = std::to_string(inst.code);
 
          if (inst.first_arg != NOARG)
          {
+            index++;
+
             if (inst.first_arg == REG)
             {
                int operando1_code = Assembler::convert_register_to_machine_code(op.get_operando1());
@@ -180,12 +193,31 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
             }
             else if (inst.first_arg == MEM)
             {
-               vm_instructions_string = vm_instructions_string + " -1";
+               int label_index = 0;
+
+               for (auto _op : ops)
+               {
+                  if (_op.get_label() == op.get_operando1())
+                  {
+                     int diff_indexes = label_index - index;
+                     vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
+                     break;
+                  }
+
+                  label_index++;
+
+                  if (_op.get_operando1() != "") label_index++;
+
+                  if (_op.get_operando2() != "") label_index++;
+
+               }
             }     
          }
 
          if (inst.second_arg != NOARG)
          {
+            index++;
+
             if (inst.second_arg == REG)
             {
                int operando2_code = Assembler::convert_register_to_machine_code(op.get_operando2());
@@ -193,7 +225,23 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
             }
             else if (inst.second_arg == MEM)
             {
-               vm_instructions_string = vm_instructions_string + " -1";
+               int label_index = 0;
+
+               for (auto _op : ops)
+               {
+                  if (_op.get_label() == op.get_operando2())
+                  {
+                     int diff_indexes = label_index - index;
+                     vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
+                     break;
+                  }
+
+                  label_index++;
+
+                  if (_op.get_operando1() != "") label_index++;
+
+                  if (_op.get_operando2() != "") label_index++;
+               }
             }     
          }
          vm_instructions_string = vm_instructions_string + " ";
