@@ -45,6 +45,8 @@ public:
    void set_operador(std::string operador) { this->operador = operador; }
    void set_operando1(std::string operando1) { this->operando1 = operando1; }
    void set_operando2(std::string operando2) { this->operando2 = operando2; }
+
+   int calculate_operation_size();
 };
 
 typedef struct VMInstructions
@@ -53,13 +55,15 @@ typedef struct VMInstructions
    int code;
    int first_arg;
    int second_arg;
+   int size;
 
-   VMInstructions(std::string symbol, int code, int first_arg, int second_arg)
+   VMInstructions(std::string symbol, int code, int first_arg, int second_arg, int size)
    {
       this->symbol = symbol;
       this->code = code;
       this->first_arg = first_arg;
       this->second_arg = second_arg;
+      this->size = size;
    }
 } VMInstructions;
 

@@ -111,49 +111,60 @@ Operation::Operation(std::string operation_stringfied)
    }
 }
 
+int Operation::calculate_operation_size()
+{
+   int size = 0;
+
+   if (this->get_operador() != "") size++;
+   if (this->get_operando1() != "") size++;
+   if (this->get_operando2() != "") size++;
+
+   return size;
+}
+
 Assembler::Assembler()
 {
-   VMInstructions ins = VMInstructions("HALT", 0, NOARG, NOARG);
+   VMInstructions ins = VMInstructions("HALT", 0, NOARG, NOARG, 1);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("LOAD", 1, REG, MEM);
+   ins = VMInstructions("LOAD", 1, REG, MEM, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("STORE", 2, REG, MEM);
+   ins = VMInstructions("STORE", 2, REG, MEM, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("READ", 3, REG, NOARG);
+   ins = VMInstructions("READ", 3, REG, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("WRITE", 4, REG, NOARG);
+   ins = VMInstructions("WRITE", 4, REG, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("COPY", 5, REG, REG);
+   ins = VMInstructions("COPY", 5, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("PUSH", 6, REG, NOARG);
+   ins = VMInstructions("PUSH", 6, REG, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("POP", 7, REG, NOARG);
+   ins = VMInstructions("POP", 7, REG, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("ADD", 8, REG, REG);
+   ins = VMInstructions("ADD", 8, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("SUB", 9, REG, REG);
+   ins = VMInstructions("SUB", 9, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("MULL", 10, REG, REG);
+   ins = VMInstructions("MULL", 10, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("DIV", 11, REG, REG);
+   ins = VMInstructions("DIV", 11, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("MOD", 12, REG, REG);
+   ins = VMInstructions("MOD", 12, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("AND", 13, REG, REG);
+   ins = VMInstructions("AND", 13, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("OR", 14, REG, REG);
+   ins = VMInstructions("OR", 14, REG, REG, 3);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("NOT", 15, REG, NOARG);
+   ins = VMInstructions("NOT", 15, REG, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("JUMP", 16, MEM, NOARG);
+   ins = VMInstructions("JUMP", 16, MEM, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("JZ", 17, MEM, NOARG);
+   ins = VMInstructions("JZ", 17, MEM, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("JN", 18, MEM, NOARG);
+   ins = VMInstructions("JN", 18, MEM, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("CALL", 19, MEM, NOARG);
+   ins = VMInstructions("CALL", 19, MEM, NOARG, 2);
    this->vm_instructions.push_back(ins);
-   ins = VMInstructions("RET", 20, NOARG, NOARG);
+   ins = VMInstructions("RET", 20, NOARG, NOARG, 1);
    this->vm_instructions.push_back(ins);
 }
 
@@ -161,13 +172,13 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
    std::vector<std::string> stringfied_vm_instructions;
 
-   int index = 0;
+   int code_total_size = 0;
 
    for (auto op : ops)
    {
       std::string vm_instructions_string = "";
 
-      if (op.get_operador() == "END") continue;
+      if (op.get_operador() == "END") break;
 
       if (op.get_operador() == "WORD")
       {
@@ -179,13 +190,11 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
       VMInstructions inst = this->find_instruction_by_symbol(op.get_operador());
       if (inst.symbol != "NOT FOUND")
       {
-         index++;
+         code_total_size = code_total_size + inst.size;
          vm_instructions_string = std::to_string(inst.code);
 
          if (inst.first_arg != NOARG)
          {
-            index++;
-
             if (inst.first_arg == REG)
             {
                int operando1_code = Assembler::convert_register_to_machine_code(op.get_operando1());
@@ -193,31 +202,25 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
             }
             else if (inst.first_arg == MEM)
             {
-               int label_index = 0;
+               int total_size_unitl_label_found = 0;
 
                for (auto _op : ops)
                {
+
                   if (_op.get_label() == op.get_operando1())
                   {
-                     int diff_indexes = label_index - index;
+                     int diff_indexes = total_size_unitl_label_found - code_total_size;
                      vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
                      break;
                   }
 
-                  label_index++;
-
-                  if (_op.get_operando1() != "") label_index++;
-
-                  if (_op.get_operando2() != "") label_index++;
-
+                  total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
                }
             }     
          }
 
          if (inst.second_arg != NOARG)
          {
-            index++;
-
             if (inst.second_arg == REG)
             {
                int operando2_code = Assembler::convert_register_to_machine_code(op.get_operando2());
@@ -225,22 +228,18 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
             }
             else if (inst.second_arg == MEM)
             {
-               int label_index = 0;
+               int total_size_unitl_label_found = 0;
 
                for (auto _op : ops)
                {
                   if (_op.get_label() == op.get_operando2())
                   {
-                     int diff_indexes = label_index - index;
+                     int diff_indexes = total_size_unitl_label_found - code_total_size;
                      vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
                      break;
                   }
 
-                  label_index++;
-
-                  if (_op.get_operando1() != "") label_index++;
-
-                  if (_op.get_operando2() != "") label_index++;
+                  total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
                }
             }     
          }
@@ -273,5 +272,5 @@ VMInstructions Assembler::find_instruction_by_symbol(std::string symbol)
       if (instruction.symbol == symbol) return instruction;
    }
 
-   return VMInstructions("NOT FOUND", -1, -1, -1);
+   return VMInstructions("NOT FOUND", -1, -1, -1, 0);
 }
