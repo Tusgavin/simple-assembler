@@ -81,6 +81,10 @@ public:
    std::vector<std::string> convert_code(std::vector<Operation> ops);
    VMInstructions find_instruction_by_symbol(std::string symbol);
    static int convert_register_to_machine_code(std::string registerName);
+   
+   static void remove_comments_from_file_input(std::vector<std::string> &input_str);
+   static void remove_empty_lines_from_file_input(std::vector<std::string> &input_str);
+   static void remove_whitespaces_from_file_input(std::vector<std::string> &input_str);
 };
 
 #endif  // MONTADOR_H

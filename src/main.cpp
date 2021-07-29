@@ -37,14 +37,37 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  std::vector<Operation *> operations_in_file;
+  /**
+   * Tratamento de linhas vazias, espaços desnecessários e comentários
+   */
+  Assembler::remove_empty_lines_from_file_input(instructions_in_file);
+  Assembler::remove_whitespaces_from_file_input(instructions_in_file);
+  Assembler::remove_comments_from_file_input(instructions_in_file);
+
+  /**
+   *  Cria operações a partir das linhas presentes no arquivo
+   */
+  std::vector<Operation> operations_in_file;
 
   for (auto instruction_stringfied : instructions_in_file)
   {
     Operation * op = new Operation(instruction_stringfied);
-    operations_in_file.push_back(op);
+    operations_in_file.push_back(*op);
   }
 
+  /**
+   * Cria uma instância do Assembler e passa as operações para serem montadas
+   */
+  Assembler *assembler = new Assembler();
+
+  std::vector<std::string> converted = assembler->convert_code(operations_in_file);
+
+  for (auto string_vm_inst : converted)
+   {
+      std::cout << string_vm_inst;
+   }
+
+   std::cout << std::endl;
 
 
   return 0;

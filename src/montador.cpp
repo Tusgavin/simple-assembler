@@ -1,17 +1,11 @@
 #include "montador.h"
 
-
 void log_error(const std::string message)
 {
   std::cout << "[ERROR]: "
   <<  message
-  << " - in file "
-  << __FILE__
-  << " at line "
-  << __LINE__
   << std::endl;
 }
-
 
 std::string left_trim(const std::string &str)
 {
@@ -29,17 +23,8 @@ std::string trim(const std::string &str)
    return right_trim(left_trim(str));
 }
 
-// TODO: implementação do montador
 Operation::Operation(std::string operation_stringfied)
 {
-   operation_stringfied = trim(operation_stringfied);
-
-   // Comments - delete every character after comment delimiter is found
-   std::string comment_delimeter = ";";
-   std::size_t comment_start_index = operation_stringfied.find(comment_delimeter);
-   if (comment_start_index != std::string::npos) 
-      operation_stringfied = operation_stringfied.substr(0, comment_start_index);
-
    operation_stringfied = trim(operation_stringfied);
 
    // Label
@@ -168,6 +153,43 @@ Assembler::Assembler()
    this->vm_instructions.push_back(ins);
 }
 
+void Assembler::remove_whitespaces_from_file_input(std::vector<std::string> &input_str)
+{
+   for (auto &str : input_str)
+   {
+      std::string line = trim(str);
+      str = line;
+   }
+}
+
+void Assembler::remove_empty_lines_from_file_input(std::vector<std::string> &input_str)
+{
+   auto it = input_str.begin();
+
+   while (it != input_str.end())
+   {
+      if (it->length() == 0) input_str.erase(it);
+      else ++it;
+   }
+}
+
+void Assembler::remove_comments_from_file_input(std::vector<std::string> &input_str)
+{
+   for (auto &str : input_str)
+   {
+      std::string line = trim(str);
+
+      std::string comment_delimeter = ";";
+      std::size_t comment_start_index = line.find(comment_delimeter);
+      if (comment_start_index != std::string::npos) {
+         line = line.substr(0, comment_start_index);
+         str = line;
+      }
+   }
+
+   Assembler::remove_empty_lines_from_file_input(input_str);
+}
+
 std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
    std::vector<std::string> stringfied_vm_instructions;
@@ -184,6 +206,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
       {
          vm_instructions_string = vm_instructions_string + op.get_operando1();
          stringfied_vm_instructions.push_back(vm_instructions_string);
+         code_total_size++;
          continue;
       }
 
