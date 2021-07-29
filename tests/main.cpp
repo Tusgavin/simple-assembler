@@ -12,13 +12,19 @@ int main()
 
    std::vector<std::string> mock_instructions;
 
-   mock_instructions.push_back("READ R0");
+   mock_instructions.push_back(";;;;;;;;;;");
+   mock_instructions.push_back("READ R0    ; comentario de testes");
    mock_instructions.push_back("LOAD R1 const100");
-   mock_instructions.push_back("ADD R0 R1");
-   mock_instructions.push_back("WRITE R0");
+   mock_instructions.push_back("ADD R0 R1 ; comentario de testes");
+   mock_instructions.push_back("WRITE R0"              );
    mock_instructions.push_back("HALT");
    mock_instructions.push_back("const100: WORD 100");
+   mock_instructions.push_back("              ");
    mock_instructions.push_back("END");
+
+   Assembler::remove_empty_lines_from_file_input(mock_instructions);
+   Assembler::remove_whitespaces_from_file_input(mock_instructions);
+   Assembler::remove_comments_from_file_input(mock_instructions);
 
    std::vector<Operation> mock_operations;
 
