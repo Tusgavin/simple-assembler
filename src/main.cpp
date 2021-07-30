@@ -72,15 +72,7 @@ int main(int argc, char *argv[]) {
    */
   Assembler *assembler = new Assembler();
 
-  std::vector<std::string> converted = assembler->convert_code(operations_in_file);
-
-  for (auto string_vm_inst : converted)
-   {
-      std::cout << string_vm_inst;
-   }
-
-   std::cout << std::endl;
-
+  assembler->convert_code(operations_in_file);
 
   return 0;
 }

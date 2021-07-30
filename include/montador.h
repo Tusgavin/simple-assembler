@@ -3,17 +3,21 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 #include <regex>
 #include <iostream>
 
 #define NOARG -1
 #define REG 0
 #define MEM 1
+#define N 100
 
 // TODO: structs, classes, e outras definições.
 
 
 void log_error(const std::string message);
+
+bool is_number(const std::string& s);
 
 std::string left_trim(const std::string &str);
 
@@ -21,7 +25,6 @@ std::string right_trim(const std::string &str);
 
 // Remove unecessary whitespaces in the beggining and end of string
 std::string trim(const std::string &str);
-
 class Operation
 {
 private:
@@ -85,6 +88,7 @@ public:
    static void remove_comments_from_file_input(std::vector<std::string> &input_str);
    static void remove_empty_lines_from_file_input(std::vector<std::string> &input_str);
    static void remove_whitespaces_from_file_input(std::vector<std::string> &input_str);
+   static void write_converted_code(std::vector<std::string> stringfied_intructions, int code_total_size, int code_initial_pos);
 };
 
 #endif  // MONTADOR_H

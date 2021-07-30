@@ -22,6 +22,7 @@ int main()
    mock_instructions.push_back("              ");
    mock_instructions.push_back("END");
 
+
    Assembler::remove_empty_lines_from_file_input(mock_instructions);
    Assembler::remove_whitespaces_from_file_input(mock_instructions);
    Assembler::remove_comments_from_file_input(mock_instructions);

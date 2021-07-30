@@ -7,6 +7,13 @@ void log_error(const std::string message)
   << std::endl;
 }
 
+bool is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
 std::string left_trim(const std::string &str)
 {
    return std::regex_replace(str, std::regex("^\\s+"), std::string(""));
@@ -190,22 +197,23 @@ void Assembler::remove_comments_from_file_input(std::vector<std::string> &input_
    Assembler::remove_empty_lines_from_file_input(input_str);
 }
 
-bool is_number(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}
-
 std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
    std::vector<std::string> stringfied_vm_instructions;
 
+   int code_initial_pos = 0;
+   bool found_first_inst = false;
    int code_total_size = 0;
 
    for (auto op : ops)
    {
       std::string vm_instructions_string = "";
+
+      if (op.get_label() == "" && !found_first_inst)
+      {
+         found_first_inst = true;
+         code_initial_pos = code_total_size;
+      }
 
       if (op.get_operador() == "END") break;
 
@@ -287,9 +295,9 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                      total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
                   }
                }
-
             }     
          }
+         
          vm_instructions_string = vm_instructions_string + " ";
          stringfied_vm_instructions.push_back(vm_instructions_string);
       }
@@ -299,7 +307,9 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
          exit(1);
       }
    }
-   std::cout << code_total_size << std::endl;
+
+   Assembler::write_converted_code(stringfied_vm_instructions, code_total_size, code_initial_pos);
+
    return stringfied_vm_instructions;
 }
 
@@ -320,4 +330,31 @@ VMInstructions Assembler::find_instruction_by_symbol(std::string symbol)
    }
 
    return VMInstructions("NOT FOUND", -1, -1, -1, 0);
+}
+
+void Assembler::write_converted_code(std::vector<std::string> stringfied_intructions, int code_total_size, int code_initial_pos)
+{
+   std::cout << "MV-EXE" << std::endl;
+
+   std::cout << std::endl;
+
+   std::string stringfied_program_details =
+      std::to_string(code_total_size) +
+      " " +
+      std::to_string(N) +
+      " " +
+      std::to_string(N + code_total_size + 1000) +
+      " " +
+      std::to_string(N + code_initial_pos);
+
+   std::cout << stringfied_program_details << std::endl;
+   
+   std::cout << std::endl;
+   
+   for (auto string_vm_inst : stringfied_intructions)
+   {
+      std::cout << string_vm_inst;
+   }
+
+   std::cout << std::endl;
 }
