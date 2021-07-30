@@ -37,12 +37,24 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  // std::cout << "Antes: " << std::endl;
+  // for (auto i : instructions_in_file)
+  // {
+  //   std::cout << i << std::endl;
+  // }
+
   /**
    * Tratamento de linhas vazias, espaços desnecessários e comentários
    */
   Assembler::remove_empty_lines_from_file_input(instructions_in_file);
   Assembler::remove_whitespaces_from_file_input(instructions_in_file);
   Assembler::remove_comments_from_file_input(instructions_in_file);
+  
+  // std::cout << "Depois: " << std::endl;
+  // for (auto i : instructions_in_file)
+  //  {
+  //     std::cout << i << std::endl;
+  //  }
 
   /**
    *  Cria operações a partir das linhas presentes no arquivo

@@ -190,6 +190,13 @@ void Assembler::remove_comments_from_file_input(std::vector<std::string> &input_
    Assembler::remove_empty_lines_from_file_input(input_str);
 }
 
+bool is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
 std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
    std::vector<std::string> stringfied_vm_instructions;
@@ -225,20 +232,29 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
             }
             else if (inst.first_arg == MEM)
             {
-               int total_size_unitl_label_found = 0;
 
-               for (auto _op : ops)
+               if (is_number(op.get_operando1()))
                {
-
-                  if (_op.get_label() == op.get_operando1())
-                  {
-                     int diff_indexes = total_size_unitl_label_found - code_total_size;
-                     vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
-                     break;
-                  }
-
-                  total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
+                  vm_instructions_string = vm_instructions_string + " " + op.get_operando1();
                }
+               else
+               {
+                  int total_size_unitl_label_found = 0;
+
+                  for (auto _op : ops)
+                  {
+
+                     if (_op.get_label() == op.get_operando1())
+                     {
+                        int diff_indexes = total_size_unitl_label_found - code_total_size;
+                        vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
+                        break;
+                     }
+
+                     total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
+                  }
+               }
+
             }     
          }
 
@@ -251,19 +267,27 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
             }
             else if (inst.second_arg == MEM)
             {
-               int total_size_unitl_label_found = 0;
-
-               for (auto _op : ops)
+               if (is_number(op.get_operando2()))
                {
-                  if (_op.get_label() == op.get_operando2())
-                  {
-                     int diff_indexes = total_size_unitl_label_found - code_total_size;
-                     vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
-                     break;
-                  }
-
-                  total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
+                  vm_instructions_string = vm_instructions_string + " " + op.get_operando2();
                }
+               else
+               {
+                  int total_size_unitl_label_found = 0;
+
+                  for (auto _op : ops)
+                  {
+                     if (_op.get_label() == op.get_operando2())
+                     {
+                        int diff_indexes = total_size_unitl_label_found - code_total_size;
+                        vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
+                        break;
+                     }
+
+                     total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
+                  }
+               }
+
             }     
          }
          vm_instructions_string = vm_instructions_string + " ";
@@ -275,7 +299,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
          exit(1);
       }
    }
-
+   std::cout << code_total_size << std::endl;
    return stringfied_vm_instructions;
 }
 
