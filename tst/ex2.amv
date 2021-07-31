@@ -1,0 +1,20 @@
+READ R0                       
+LOAD R1 const1          
+LOAD R2 const1          
+SUB R2 R1               
+LOAD R3 const1          
+SUB R0 R1               
+JZ imprimePrim          
+calcula: SUB R0 R1      
+JZ imprime              
+STORE R3 const1         
+ADD R3 R2               
+LOAD R2 const1          
+JUMP calcula            
+imprime: WRITE R3       
+JUMP fim;               
+imprimePrim: WRITE R2   
+fim: HALT               
+
+const1: WORD 1          
+END
