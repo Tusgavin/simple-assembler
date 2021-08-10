@@ -88,7 +88,11 @@ public:
    static void remove_comments_from_file_input(std::vector<std::string> &input_str);
    static void remove_empty_lines_from_file_input(std::vector<std::string> &input_str);
    static void remove_whitespaces_from_file_input(std::vector<std::string> &input_str);
-   static void write_converted_code(std::vector<std::string> stringfied_intructions, int code_total_size, int code_initial_pos);
+   static void write_converted_code(
+      std::vector<std::string> stringfied_intructions,
+      int code_total_size,
+      int code_initial_pos,
+      std::vector<std::string> instructions_to_link);
 };
 
 #endif  // MONTADOR_H

@@ -200,18 +200,26 @@ void Assembler::remove_comments_from_file_input(std::vector<std::string> &input_
 std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 {
    std::vector<std::string> stringfied_vm_instructions;
+   std::vector<std::string> instructions_to_link;
 
    int code_initial_pos = 0;
    bool found_first_inst = false;
+   bool found_main = false;
    int code_total_size = 0;
 
    for (auto op : ops)
    {
       std::string vm_instructions_string = "";
 
-      if (op.get_label() == "" && !found_first_inst)
+      if (op.get_label() != "" && !found_first_inst)
       {
          found_first_inst = true;
+         code_initial_pos = code_total_size;
+      }
+
+      if (op.get_label() == "main" && !found_main)
+      {
+         found_main = true;
          code_initial_pos = code_total_size;
       }
 
@@ -219,15 +227,28 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 
       if (op.get_operador() == "WORD")
       {
-         vm_instructions_string = vm_instructions_string + op.get_operando1();
+         if (op.get_label() != "")
+         {
+            std::string link_label_header = ":" + op.get_label() + " " + std::to_string(code_total_size);
+            instructions_to_link.push_back(link_label_header);
+         }
+         
+         vm_instructions_string = vm_instructions_string + op.get_operando1() + " ";
          stringfied_vm_instructions.push_back(vm_instructions_string);
          code_total_size++;
          continue;
       }
 
+
       VMInstructions inst = this->find_instruction_by_symbol(op.get_operador());
       if (inst.symbol != "NOT FOUND")
       {
+         if (op.get_label() != "")
+         {
+            std::string link_label_header = ":" + op.get_label() + " " + std::to_string(code_total_size);
+            instructions_to_link.push_back(link_label_header);
+         }
+
          code_total_size = code_total_size + inst.size;
          vm_instructions_string = std::to_string(inst.code);
 
@@ -248,6 +269,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                else
                {
                   int total_size_unitl_label_found = 0;
+                  bool found_label = false;
 
                   for (auto _op : ops)
                   {
@@ -256,14 +278,19 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                      {
                         int diff_indexes = total_size_unitl_label_found - code_total_size;
                         vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
+                        found_label = true;
                         break;
                      }
 
                      total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
                   }
-               }
 
-            }     
+                  if (!found_label)
+                  {
+                     vm_instructions_string = vm_instructions_string + " " + op.get_operando1();
+                  }
+               }
+            }
          }
 
          if (inst.second_arg != NOARG)
@@ -282,6 +309,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                else
                {
                   int total_size_unitl_label_found = 0;
+                  bool found_label = false;
 
                   for (auto _op : ops)
                   {
@@ -289,10 +317,16 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                      {
                         int diff_indexes = total_size_unitl_label_found - code_total_size;
                         vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
+                        found_label = true;
                         break;
                      }
 
                      total_size_unitl_label_found = total_size_unitl_label_found + _op.calculate_operation_size();
+                  }
+
+                  if (!found_label)
+                  {
+                     vm_instructions_string = vm_instructions_string + " " + op.get_operando2();
                   }
                }
             }     
@@ -308,7 +342,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
       }
    }
 
-   Assembler::write_converted_code(stringfied_vm_instructions, code_total_size, code_initial_pos);
+   Assembler::write_converted_code(stringfied_vm_instructions, code_total_size, code_initial_pos, instructions_to_link);
 
    return stringfied_vm_instructions;
 }
@@ -332,9 +366,19 @@ VMInstructions Assembler::find_instruction_by_symbol(std::string symbol)
    return VMInstructions("NOT FOUND", -1, -1, -1, 0);
 }
 
-void Assembler::write_converted_code(std::vector<std::string> stringfied_intructions, int code_total_size, int code_initial_pos)
+void Assembler::write_converted_code(
+   std::vector<std::string> stringfied_intructions,
+   int code_total_size, int code_initial_pos,
+   std::vector<std::string> instructions_to_link)
 {
    std::cout << "MV-EXE" << std::endl;
+
+   std::cout << std::endl;
+
+   if (!instructions_to_link.empty())
+   {
+      for (auto link : instructions_to_link) std::cout << link << std::endl;
+   }
 
    std::cout << std::endl;
 
