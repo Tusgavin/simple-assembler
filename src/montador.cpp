@@ -277,6 +277,11 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                      if (_op.get_label() == op.get_operando1())
                      {
                         int diff_indexes = total_size_unitl_label_found - code_total_size;
+                        
+                        (total_size_unitl_label_found > code_total_size) ?
+                           diff_indexes = total_size_unitl_label_found - code_total_size - 1 :
+                           diff_indexes = total_size_unitl_label_found - code_total_size + 1;
+
                         vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
                         found_label = true;
                         break;
@@ -287,7 +292,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 
                   if (!found_label)
                   {
-                     vm_instructions_string = vm_instructions_string + " " + op.get_operando1();
+                     vm_instructions_string = vm_instructions_string + " :" + op.get_operando1();
                   }
                }
             }
@@ -316,6 +321,11 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
                      if (_op.get_label() == op.get_operando2())
                      {
                         int diff_indexes = total_size_unitl_label_found - code_total_size;
+
+                        (total_size_unitl_label_found > code_total_size) ?
+                           diff_indexes = total_size_unitl_label_found - code_total_size - 1 :
+                           diff_indexes = total_size_unitl_label_found - code_total_size + 1;
+
                         vm_instructions_string = vm_instructions_string + " " + std::to_string(diff_indexes);
                         found_label = true;
                         break;
@@ -326,7 +336,7 @@ std::vector<std::string> Assembler::convert_code(std::vector<Operation> ops)
 
                   if (!found_label)
                   {
-                     vm_instructions_string = vm_instructions_string + " " + op.get_operando2();
+                     vm_instructions_string = vm_instructions_string + " :" + op.get_operando2();
                   }
                }
             }     
